@@ -104,6 +104,16 @@ async function hashPassword(password) {
     }
 }
 
+async function query(sql, params = []) {
+    const connection = await getConnection();
+    try {
+        const [rows] = await connection.execute(sql, params);
+        return rows;
+    } finally {
+        connection.release();
+    }
+}
+
 export { 
     create, 
     read, 
@@ -111,5 +121,6 @@ export {
     deleteRecord, 
     comparePassword, 
     hashPassword,
-    getConnection
+    getConnection,
+    query
 };

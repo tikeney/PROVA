@@ -3,22 +3,18 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 
-// Importar rotas
 import authRotas from './routes/authRotas.js';
-import clienteRotas from './routes/clienteRotas.js';
-import equipamentoRotas from './routes/equipamentoRotas.js';
-import emprestimoRotas from './routes/emprestimoRotas.js';
-
-// Importar middlewares
-import { simpleLogMiddleware } from './middlewares/logMiddleware.js';
+import produtoRotas from './routes/produtoRotas.js';
+import movimentacaoRotas from './routes/movimentacaoRotas.js';
+import usuarioRotas from './routes/usuarioRotas.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
+import { simpleLogMiddleware } from './middlewares/logMiddleware.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares globais
 app.use(helmet());
 app.use(cors({
     origin: '*',
@@ -29,33 +25,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(simpleLogMiddleware);
 
-// Rotas da API
 app.use('/api/auth', authRotas);
-app.use('/api/clientes', clienteRotas);
-app.use('/api/equipamentos', equipamentoRotas);
-app.use('/api/emprestimos', emprestimoRotas);
+app.use('/api/produtos', produtoRotas);
+app.use('/api/movimentacoes', movimentacaoRotas);
+app.use('/api/usuarios', usuarioRotas);
 
-// Rota raiz
 app.get('/', (req, res) => {
     res.json({
         sucesso: true,
-        mensagem: 'OfficeTech API - Sistema de Gestão de Empréstimos',
+        mensagem: 'TechRent API - Sistema de Gestão de Estoque',
         versao: '1.0.0',
         rotas: {
             autenticacao: '/api/auth',
-            clientes: '/api/clientes',
-            equipamentos: '/api/equipamentos',
-            emprestimos: '/api/emprestimos',
+            produtos: '/api/produtos',
+            movimentacoes: '/api/movimentacoes',
+            usuarios: '/api/usuarios',
         }
     });
 });
 
 app.use('*', (req, res) => {
-    res.status(404).json({
-        sucesso: false,
-        erro: 'Rota não encontrada',
-        mensagem: `A rota ${req.method} ${req.originalUrl} não foi encontrada`
-    });
+    res.status(404).json({ sucesso: false, erro: 'Rota não encontrada' });
 });
 
 app.use(errorMiddleware);

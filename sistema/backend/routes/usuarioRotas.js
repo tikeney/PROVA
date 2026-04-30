@@ -1,29 +1,12 @@
-import express from 'express';
-import AuthController from '../controllers/AuthController.js';
-import { authMiddleware, adminMiddleware } from '../middlewares/authMiddleware.js';
+import { Router } from 'express';
+import UsuarioController from '../controllers/UsuarioController.js';
+import { autenticar } from '../middlewares/authMiddleware.js';
 
-const router = express.Router();
+const router = Router();
 
-// Rotas de usuários (apenas admin)
-router.get('/', authMiddleware, adminMiddleware, AuthController.listarUsuarios);
-router.post('/', authMiddleware, adminMiddleware, AuthController.criarUsuario);
-router.put('/:id', authMiddleware, adminMiddleware, AuthController.atualizarUsuario);
-router.delete('/:id', authMiddleware, adminMiddleware, AuthController.excluirUsuario);
-
-// Rotas OPTIONS para CORS (preflight requests)
-router.options('/', (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.sendStatus(200);
-});
-
-router.options('/:id', (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.sendStatus(200);
-});
+router.get('/', autenticar, UsuarioController.listarTodos);
+router.get('/:id', autenticar, UsuarioController.buscarPorId);
+router.put('/:id', autenticar, UsuarioController.atualizar);
+router.delete('/:id', autenticar, UsuarioController.excluir);
 
 export default router;
-
